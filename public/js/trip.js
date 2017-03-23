@@ -22,6 +22,13 @@ var tripModule = (function () {
   var days = [],
       currentDay;
 
+  $.get('/api/days')
+  .then(function (results) {
+    results.forEach(function (data) {
+      days.push(data)
+    })
+  })
+
   // jQuery selections
 
   var $addButton, $removeButton;
@@ -41,7 +48,18 @@ var tripModule = (function () {
   // jQuery event binding
 
   $(function () {
-    $addButton.on('click', addDay);
+    $addButton.on('click', function () {
+      addDay()
+      var databaseDays
+      $.get('/api/days')
+      .then(function (days) {
+        databaseDays = days.length
+        $.post('/api/days', {number: databaseDays + 1} ).then()
+      })
+      .catch(function (err) {
+        throw new Error(err)
+      })
+    });
     $removeButton.on('click', deleteCurrentDay);
   });
 
@@ -75,7 +93,7 @@ var tripModule = (function () {
   var publicAPI = {
 
     load: function () {
-      $(addDay);
+      // console.log(days)
     },
 
     switchTo: switchTo,

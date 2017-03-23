@@ -31,14 +31,28 @@ router.get('/activities', function (req, res, next) {
 
 //Getting all days
 router.get('/days', function (req, res, next) {
-  console.log("we got the days");
+  Day.findOrCreate({
+    where: {
+      number: 1
+    }
+  })
+  .then(function (day) {
+    Day.findAll()
+    .then(function (days) {
+      if (days.length)
+      res.json(days)
+    })
+  })
+  .catch(next);
 });
 
 //Creating a new day
 router.post('/days', function (req, res, next) {
-  Activity.findAll()
-  .then(function (allActivities) {
-    res.json(allActivities)
+  Day.create({
+    number: Number(req.body.number)
+  })
+  .then(function (day) {
+    res.sendStatus(201)
   })
   .catch(next);
 });
